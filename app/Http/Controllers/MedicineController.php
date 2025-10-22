@@ -8,18 +8,21 @@ use Illuminate\Http\Request;
 
 class MedicineController extends Controller
 {
+    // Show all medicines
     public function index()
     {
         $medicines = Medicine::with('medicineType')->get();
-        return response()->json($medicines);
+        return view('medicines.index', compact('medicines'));
     }
 
+    // Show form to add new medicine
     public function create()
     {
         $types = MedicineType::all();
-        return response()->json($types);
+        return view('medicines.create', compact('types'));
     }
 
+    // Store medicine
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -29,27 +32,44 @@ class MedicineController extends Controller
             'quantity' => 'required|integer|min:0',
         ]);
 
-        $medicine = Medicine::create($validated);
-        return response()->json($medicine, 201);
+        Medicine::create($validated);
+
+        return redirect()->route('medicines.index')
+                         ->with('success', 'Medicine added successfully!');
     }
 
-    public function show($id)
-    {
-        $medicine = Medicine::with('medicineType')->findOrFail($id);
-        return response()->json($medicine);
-    }
-
-    public function update(Request $request, $id)
+    // Edit form (optional, if you want)
+    public function edit($id)
     {
         $medicine = Medicine::findOrFail($id);
-        $medicine->update($request->all());
-        return response()->json($medicine);
+        $types = MedicineType::all();
+        return view('medicines.edit', compact('medicine', 'types'));
     }
 
+    // Update medicine
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'type_id' => 'required|exists:medicine_types,id',
+            'price' => 'required|numeric',
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        $medicine = Medicine::findOrFail($id);
+        $medicine->update($validated);
+
+        return redirect()->route('medicines.index')
+                         ->with('success', 'Medicine updated successfully!');
+    }
+
+    // Delete
     public function destroy($id)
     {
         $medicine = Medicine::findOrFail($id);
         $medicine->delete();
-        return response()->json(['message' => 'Medicine deleted successfully']);
+
+        return redirect()->route('medicines.index')
+                         ->with('success', 'Medicine deleted successfully!');
     }
 }
