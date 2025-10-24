@@ -11,7 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('medicine_id')->constrained('medicines')->onDelete('cascade');
             $table->foreignId('batch_id')->nullable()->constrained('inventory_batches')->nullOnDelete();
-            $table->integer('change');
+            $table->integer('stock_change');
+
             $table->enum('movement_type',['purchase','sale','adjustment','return'])->default('adjustment');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();

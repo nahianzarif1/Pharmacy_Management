@@ -8,68 +8,138 @@ use Illuminate\Http\Request;
 
 class MedicineController extends Controller
 {
-    // Show all medicines
-    public function index()
+    // Show all medicines with search and filters
+    public function index(Request $request)
     {
-        $medicines = Medicine::with('medicineType')->get();
-        return view('medicines.index', compact('medicines'));
+        $query = Medicine::with('medicineType');
+
+        // search by sku, name, generic_name
+        if ($search = $request->query('q')) {
+            $query->where(function($q) use ($search) {
+                $q->where('sku', 'like', "%{$search}%")
+                  ->orWhere('name', 'like', "%{$search}%")
+                  ->orWhere('generic_name', 'like', "%{$search}%");
+            });
+        }
+
+        // filter by type
+        if ($type = $request->query('type')) {
+            $query->where('medicine_type_id', $type);
+        }
+
+        // filter by status: active, inactive
+        if (($status = $request->query('status')) !== null) {
+            if ($status === 'active') $query->where('is_active', true);
+            if ($status === 'inactive') $query->where('is_active', false);
+        }
+
+        // low stock filter
+        if ($request->boolean('low_stock')) {
+            $query->whereRaw('(
+                select coalesce(sum(quantity),0) from inventory_batches where inventory_batches.medicine_id = medicines.id
+            ) <= medicines.reorder_level');
+        }
+
+        $medicines = $query->latest()->paginate(15)->withQueryString();
+
+        $types = MedicineType::orderBy('name')->get();
+
+        return view('medicines.index', compact('medicines', 'types'));
+    }
+
+    /**
+     * JSON search endpoint for typeahead
+     */
+    public function search(Request $request)
+    {
+        $q = $request->query('q');
+        $results = [];
+        if ($q) {
+            $results = Medicine::where('sku', 'like', "%{$q}%")
+                ->orWhere('name', 'like', "%{$q}%")
+                ->orWhere('generic_name', 'like', "%{$q}%")
+                ->limit(20)
+                ->get(['id','sku','name','generic_name']);
+        }
+
+        return response()->json($results);
     }
 
     // Show form to add new medicine
     public function create()
     {
-        $types = MedicineType::all();
-        return view('medicines.create', compact('types'));
+        $medicineTypes = MedicineType::orderBy('name')->get(['id', 'name']);
+        $showTypeWarning = $medicineTypes->isEmpty();
+        
+        return view('medicines.create', compact('medicineTypes', 'showTypeWarning'));
     }
 
     // Store medicine
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'type_id' => 'required|exists:medicine_types,id',
-            'price' => 'required|numeric',
-            'quantity' => 'required|integer|min:0',
-        ]);
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'generic_name' => 'nullable|string|max:255',
+                'medicine_type_id' => 'required|exists:medicine_types,id',
+                'unit' => 'nullable|string|max:50',
+                'strength' => 'nullable|string|max:50',
+                'price_per_unit' => 'required|numeric|min:0',
+                'reorder_level' => 'nullable|integer|min:0',
+                'description' => 'nullable|string',
+            ]);
 
-        Medicine::create($validated);
+            $medicine = Medicine::create($validated);
 
-        return redirect()->route('medicines.index')
-                         ->with('success', 'Medicine added successfully!');
-    }
+            return redirect()->route('medicines.show', $medicine)
+                             ->with('success', 'Medicine added successfully!');
+        }
 
-    // Edit form (optional, if you want)
-    public function edit($id)
+        // Show medicine details
+        public function show(Medicine $medicine)
+        {
+            $medicine->load(['medicineType', 'inventoryBatches', 'stockMovements' => function($query) {
+                $query->latest()->take(10);
+            }]);
+        
+            return view('medicines.show', compact('medicine'));
+        }
+
+        // Edit form (optional, if you want)
+    public function edit(Medicine $medicine)
     {
-        $medicine = Medicine::findOrFail($id);
-        $types = MedicineType::all();
-        return view('medicines.edit', compact('medicine', 'types'));
+        $medicineTypes = MedicineType::orderBy('name')->get(['id', 'name']);
+        return view('medicines.edit', compact('medicine', 'medicineTypes'));
     }
 
     // Update medicine
-    public function update(Request $request, $id)
+    public function update(Request $request, Medicine $medicine)
     {
         $validated = $request->validate([
-            'name' => 'required|string',
-            'type_id' => 'required|exists:medicine_types,id',
-            'price' => 'required|numeric',
-            'quantity' => 'required|integer|min:0',
+            'name' => 'required|string|max:255',
+            'generic_name' => 'nullable|string|max:255',
+            'medicine_type_id' => 'required|exists:medicine_types,id',
+            'unit' => 'nullable|string|max:50',
+            'strength' => 'nullable|string|max:50',
+            'price_per_unit' => 'required|numeric|min:0',
+            'reorder_level' => 'nullable|integer|min:0',
+            'description' => 'nullable|string',
         ]);
 
-        $medicine = Medicine::findOrFail($id);
         $medicine->update($validated);
 
-        return redirect()->route('medicines.index')
+        return redirect()->route('medicines.show', $medicine)
                          ->with('success', 'Medicine updated successfully!');
     }
 
     // Delete
-    public function destroy($id)
+    public function destroy(Medicine $medicine)
     {
-        $medicine = Medicine::findOrFail($id);
-        $medicine->delete();
-
-        return redirect()->route('medicines.index')
-                         ->with('success', 'Medicine deleted successfully!');
+        try {
+            $medicine->delete();
+            return redirect()->route('medicines.index')
+                           ->with('success', 'Medicine deleted successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Cannot delete this medicine. It may have related records.');
+        }
     }
 }

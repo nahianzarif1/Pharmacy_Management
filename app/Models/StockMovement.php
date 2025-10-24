@@ -18,4 +18,14 @@ class StockMovement extends Model
     {
         return $this->belongsTo(Medicine::class);
     }
+
+    public function batch()
+    {
+        return $this->belongsTo(InventoryBatch::class, 'batch_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }
