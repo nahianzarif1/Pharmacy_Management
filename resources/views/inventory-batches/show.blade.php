@@ -17,7 +17,7 @@
                     <div>Quantity: <strong>{{ $inventoryBatch->quantity }}</strong></div>
                     <div>Received: <strong>{{ $inventoryBatch->received_date ? \Illuminate\Support\Carbon::parse($inventoryBatch->received_date)->format('Y-m-d') : '-' }}</strong></div>
                     <div>Expiry: <strong>{{ $inventoryBatch->expiry_date ? \Illuminate\Support\Carbon::parse($inventoryBatch->expiry_date)->format('Y-m-d') : '-' }}</strong></div>
-                    <div>Unit Cost: <strong>₹{{ number_format($inventoryBatch->unit_cost ?? 0, 2) }}</strong></div>
+                    <div>Unit Cost: <strong>৳{{ number_format($inventoryBatch->unit_cost ?? 0, 2) }}</strong></div>
                 </div>
 
                 <hr class="my-4">
@@ -26,7 +26,7 @@
                 <div class="space-y-2">
                     @forelse($inventoryBatch->movements as $mv)
                         <div class="p-2 border rounded">
-                            <div>{{ $mv->created_at ? \Illuminate\Support\Carbon::parse($mv->created_at)->format('Y-m-d H:i') : '-' }} - {{ ucfirst($mv->movement_type) }} - <strong>{{ $mv->change }}</strong> by {{ $mv->user->name ?? 'system' }}</div>
+                            <div>{{ $mv->created_at ? \Illuminate\Support\Carbon::parse($mv->created_at)->format('Y-m-d H:i') : '-' }} - {{ ucfirst($mv->movement_type) }} - <strong>{{ $mv->stock_change }}</strong> by {{ $mv->user->name ?? 'system' }}</div>
                         </div>
                     @empty
                         <div class="text-gray-500">No movements yet.</div>

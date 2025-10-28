@@ -66,7 +66,7 @@ class InventoryBatchController extends Controller
         StockMovement::create([
             'medicine_id' => $batch->medicine_id,
             'batch_id' => $batch->id,
-            'change' => $validated['quantity'],
+            'stock_change' => $validated['quantity'],
             'movement_type' => 'purchase',
             'created_by' => auth()->id(),
             'created_at' => now(),
@@ -124,7 +124,7 @@ class InventoryBatchController extends Controller
     public function adjust(Request $request, InventoryBatch $inventoryBatch)
     {
         $validated = $request->validate([
-            'change' => 'required|integer',
+            'change' => 'required|integer', // keep request param name for compatibility
             'reason' => 'nullable|string',
         ]);
 
@@ -134,7 +134,7 @@ class InventoryBatchController extends Controller
         StockMovement::create([
             'medicine_id' => $inventoryBatch->medicine_id,
             'batch_id' => $inventoryBatch->id,
-            'change' => $validated['change'],
+            'stock_change' => $validated['change'],
             'movement_type' => 'adjustment',
             'created_by' => auth()->id(),
             'created_at' => now(),

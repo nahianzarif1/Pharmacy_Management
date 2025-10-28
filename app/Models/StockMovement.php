@@ -10,7 +10,7 @@ class StockMovement extends Model
     use HasFactory;
 
     public $timestamps = false; // created_at only
-    protected $fillable = ['medicine_id','batch_id','change','movement_type','created_by','created_at'];
+    protected $fillable = ['medicine_id','batch_id','stock_change','movement_type','created_by','created_at'];
 
     protected $dates = ['created_at'];
 

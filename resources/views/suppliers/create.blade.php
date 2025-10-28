@@ -46,7 +46,7 @@
             </div>
 
             <div class="mt-6 flex items-center justify-between">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save Supplier</button>
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Save Supplier</button>
                 <a href="{{ route('suppliers.index') }}" class="text-gray-500">Cancel</a>
             </div>
         </form>

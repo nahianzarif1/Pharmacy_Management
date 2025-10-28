@@ -27,12 +27,18 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'supplier_id'=>'required|exists:suppliers,id',
-            'invoice_no'=>'required|unique:purchases,invoice_no',
-            'items'=>'required|array',
+            'supplier_id' => 'required|exists:suppliers,id',
+            'invoice_no' => 'required|unique:purchases,invoice_no',
+            'purchase_date' => 'nullable|date',
+            'items' => 'required|array|min:1',
+            'items.*.medicine_id' => 'required|exists:medicines,id',
+            'items.*.batch_no' => 'nullable|string|max:50',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.unit_cost' => 'required|numeric|min:0',
         ]);
 
-        DB::transaction(function() use ($request) {
+        try {
+            DB::transaction(function() use ($request) {
             $purchase = Purchase::create([
                 'supplier_id'=>$request->supplier_id,
                 'invoice_no'=>$request->invoice_no,
@@ -78,7 +84,7 @@ class PurchaseController extends Controller
                 StockMovement::create([
                     'medicine_id'=>$it['medicine_id'],
                     'batch_id'=>$batch->id,
-                    'change'=>$it['quantity'],
+                    'stock_change'=>$it['quantity'],
                     'movement_type'=>'purchase',
                     'created_by'=>auth()->id(),
                     'created_at'=>now(),
@@ -87,8 +93,12 @@ class PurchaseController extends Controller
 
             $purchase->total_amount = $total;
             $purchase->save();
-        });
+            });
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', 'Failed to save purchase: '.$e->getMessage());
+        }
 
         return redirect()->route('purchases.index')->with('success','Purchase recorded.');
     }
 }
+

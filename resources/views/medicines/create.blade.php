@@ -39,10 +39,18 @@
                     <form method="POST" action="{{ route('medicines.store') }}" class="space-y-6">
                         @csrf
 
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700">Medicine Name</label>
-                            <div class="mt-1">
-                                <input id="name" name="name" type="text" value="{{ old('name') }}" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="sku" class="block text-sm font-medium text-gray-700">SKU</label>
+                                <div class="mt-1">
+                                    <input id="sku" name="sku" type="text" value="{{ old('sku') }}" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700">Medicine Name</label>
+                                <div class="mt-1">
+                                    <input id="name" name="name" type="text" value="{{ old('name') }}" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                </div>
                             </div>
                         </div>
 
@@ -68,10 +76,25 @@
                             <div>
                                 <label for="unit" class="block text-sm font-medium text-gray-700">Unit</label>
                                 <div class="mt-1">
-                                    <input id="unit" name="unit" type="text" value="{{ old('unit') }}" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <input id="unit" name="unit" type="text" value="{{ old('unit') }}" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., tablet, bottle">
                                 </div>
                             </div>
 
+                            <div>
+                                <label for="strength" class="block text-sm font-medium text-gray-700">Strength</label>
+                                <div class="mt-1">
+                                    <input id="strength" name="strength" type="text" value="{{ old('strength') }}" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., 500mg">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="price_per_unit" class="block text-sm font-medium text-gray-700">Price per Unit</label>
+                                <div class="mt-1">
+                                    <input id="price_per_unit" name="price_per_unit" type="number" step="0.01" min="0" value="{{ old('price_per_unit') }}" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                </div>
+                            </div>
                             <div>
                                 <label for="reorder_level" class="block text-sm font-medium text-gray-700">Reorder Level</label>
                                 <div class="mt-1">
@@ -80,16 +103,14 @@
                             </div>
                         </div>
 
-                        <div>
-                            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                            <div class="mt-1">
-                                <textarea id="description" name="description" rows="3" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">{{ old('description') }}</textarea>
-                            </div>
+                        <div class="flex items-center">
+                            <input id="is_active" name="is_active" type="checkbox" value="1" class="h-4 w-4 text-indigo-600 border-gray-300 rounded" {{ old('is_active', true) ? 'checked' : '' }}>
+                            <label for="is_active" class="ml-2 block text-sm text-gray-700">Active</label>
                         </div>
 
                         <div class="flex items-center justify-end space-x-3">
                             <a href="{{ route('medicines.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Cancel</a>
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-sm text-white hover:bg-indigo-700">Create Medicine</button>
+                            <button type="submit"class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Create Medicine</button>
                         </div>
                     </form>
                 </div>

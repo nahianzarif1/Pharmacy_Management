@@ -26,11 +26,18 @@ class SaleController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'items'=>'required|array',
-            'payment_method'=>'nullable|string'
+            'items' => 'required|array|min:1',
+            'items.*.medicine_id' => 'required|exists:medicines,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.unit_price' => 'nullable|numeric|min:0',
+            'payment_method' => 'nullable|string',
+            'customer_name' => 'nullable|string|max:255',
+            'discount' => 'nullable|numeric|min:0',
+            'tax' => 'nullable|numeric|min:0',
         ]);
 
-        DB::transaction(function() use ($request) {
+        try {
+            DB::transaction(function() use ($request) {
             $sale = Sale::create([
                 'invoice_no' => $request->invoice_no ?? 'INV-'.time(),
                 'sold_by'=>auth()->id(),
@@ -78,7 +85,7 @@ class SaleController extends Controller
                     StockMovement::create([
                         'medicine_id'=>$medicineId,
                         'batch_id'=>$batch->id,
-                        'change'=> -$take,
+                        'stock_change'=> -$take,
                         'movement_type'=>'sale',
                         'created_by'=>auth()->id(),
                         'created_at'=>now(),
@@ -105,8 +112,12 @@ class SaleController extends Controller
                 'amount'=>$sale->total,
                 'created_by'=>auth()->id(),
             ]);
-        });
+            });
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', 'Failed to save sale: '.$e->getMessage());
+        }
 
         return redirect()->route('sales.index')->with('success','Sale recorded.');
     }
 }
+

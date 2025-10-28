@@ -36,8 +36,8 @@
                                         {{ $date ?? '' }}
                                     </td>
                                     <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ optional($m->medicine)->name }}</td>
-                                    <td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $m->change > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">{{ $m->movement_type }}</span></td>
-                                    <td class="px-6 py-4 text-sm font-medium {{ $m->change > 0 ? 'text-green-600' : 'text-red-600' }}">{{ $m->change > 0 ? '+' : '' }}{{ $m->change }}</td>
+                                    <td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $m->stock_change > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">{{ $m->movement_type }}</span></td>
+                                    <td class="px-6 py-4 text-sm font-medium {{ $m->stock_change > 0 ? 'text-green-600' : 'text-red-600' }}">{{ $m->stock_change > 0 ? '+' : '' }}{{ $m->stock_change }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500">{{ optional($m->user)->name ?? 'System' }}</td>
                                 </tr>
                             @endforeach

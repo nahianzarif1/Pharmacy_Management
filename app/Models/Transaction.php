@@ -12,10 +12,12 @@ class Transaction extends Model
     protected $table = 'transactions';
 
     protected $fillable = [
-        'transaction_type', // e.g., 'purchase', 'sale', 'return'
-        'reference_id',     // foreign key to purchase/sale/return
+        'sale_id',
+        'return_id',
+        'purchase_id',
+        'payment_method',
         'amount',
-        'payment_method',   // e.g., cash, card, mobile
         'transaction_date',
+        'created_by',
     ];
 }

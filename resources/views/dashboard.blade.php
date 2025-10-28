@@ -5,13 +5,13 @@
                 {{ __('Pharmacy Database Management') }}
             </h2>
             <div class="flex space-x-4">
-                <a href="{{ route('medicines.create') }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700">
+                <a href="{{ route('medicines.create') }}" class="inline-flex items-center px-4 py-2 btn-theme border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest btn-underline">
                     New Medicine
                 </a>
-                <a href="{{ route('inventory-batches.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
+                <a href="{{ route('inventory-batches.create') }}" class="inline-flex items-center px-4 py-2 btn-theme border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest btn-underline">
                     New Batch
                 </a>
-                <a href="{{ route('suppliers.create') }}" class="inline-flex items-center px-4 py-2 bg-purple-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700">
+                <a href="{{ route('suppliers.create') }}" class="inline-flex items-center px-4 py-2 btn-theme border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest btn-underline">
                     New Supplier
                 </a>
             </div>
@@ -26,7 +26,7 @@
                     <div class="text-sm text-gray-500">Total Medicines</div>
                     <div class="mt-2 text-3xl font-bold">{{ $totalMedicines }}</div>
                     <div class="mt-4">
-                        <a href="{{ route('medicines.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All →</a>
+                        <a href="{{ route('medicines.index') }}" class="link-theme btn-underline text-sm font-medium">View All →</a>
                     </div>
                 </div>
                 <div class="bg-white shadow rounded-lg p-4">
@@ -40,7 +40,7 @@
                     <div class="text-sm text-gray-500">Low Stock Alerts</div>
                     <div class="mt-2 text-3xl font-bold text-red-600">{{ $lowStockMedicines->count() }}</div>
                     <div class="mt-4">
-                        <a href="#low-stock" class="text-red-600 hover:text-red-800 text-sm font-medium">View Details →</a>
+                        <a href="{{ route('medicines.index', ['low_stock' => 1]) }}" class="link-theme btn-underline text-sm font-medium">View Details →</a>
                     </div>
                 </div>
             </div>
@@ -58,7 +58,7 @@
                         </div>
                     </h3>
                     <div class="space-y-3">
-                        <a href="{{ route('medicines.index') }}" class="block px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded text-sm">
+                        <a href="{{ route('medicines.index') }}" class="block px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded text-sm btn-underline">
                             View All Medicines
                         </a>
                         <a href="{{ route('medicine-types.index') }}" class="block px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded text-sm">
@@ -174,7 +174,7 @@
                         Medicines
                     </h3>
                     <div class="space-y-3">
-                        <a href="{{ route('medicines.index') }}" class="block px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md">View All Medicines</a>
+                        <a href="{{ route('medicines.index') }}" class="block px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md btn-underline">View All Medicines</a>
                         <a href="{{ route('medicines.create') }}" class="block px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md">Add New Medicine</a>
                         <a href="{{ route('medicine-types.index') }}" class="block px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md">Manage Medicine Types</a>
                     </div>
@@ -204,9 +204,9 @@
                         Transactions
                     </h3>
                     <div class="space-y-3">
-                        <button onclick="alert('New Purchase feature coming soon')" class="block w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md">New Purchase</button>
-                        <button onclick="alert('New Sale feature coming soon')" class="block w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md">New Sale</button>
-                        <button onclick="alert('View Reports feature coming soon')" class="block w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md">View Reports</button>
+                        <a href="{{ route('purchases.index') }}" class="block w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md">View Purchases</a>
+                        <a href="{{ route('sales.index') }}" class="block w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md">View Sales</a>
+                        <a href="{{ route('transactions.index') }}" class="block w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md">Show Transactions</a>
                     </div>
                 </div>
             </div>
@@ -293,13 +293,13 @@
                                             </td>
                                             <td class="px-6 py-4 text-sm text-gray-900">
                                                 {{ optional($activity->medicine)->name }} 
-                                                <span class="text-gray-500">({{ $activity->change > 0 ? '+' : '' }}{{ $activity->change }})</span>
+                                                <span class="text-gray-500">({{ $activity->stock_change > 0 ? '+' : '' }}{{ $activity->stock_change }})</span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {{ optional($activity->user)->name ?? 'System' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                <a href="#" class="text-blue-600 hover:text-blue-900">View Details</a>
+                                                <a href="#" class="link-theme btn-underline">View Details</a>
                                             </td>
                                         </tr>
                                     @endforeach

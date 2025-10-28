@@ -78,14 +78,15 @@ class MedicineController extends Controller
     public function store(Request $request)
     {
             $validated = $request->validate([
+                'sku' => 'required|string|max:50|unique:medicines,sku',
                 'name' => 'required|string|max:255',
                 'generic_name' => 'nullable|string|max:255',
                 'medicine_type_id' => 'required|exists:medicine_types,id',
-                'unit' => 'nullable|string|max:50',
+                'unit' => 'required|string|max:50',
                 'strength' => 'nullable|string|max:50',
                 'price_per_unit' => 'required|numeric|min:0',
                 'reorder_level' => 'nullable|integer|min:0',
-                'description' => 'nullable|string',
+                'is_active' => 'sometimes|boolean',
             ]);
 
             $medicine = Medicine::create($validated);
@@ -115,14 +116,15 @@ class MedicineController extends Controller
     public function update(Request $request, Medicine $medicine)
     {
         $validated = $request->validate([
+            'sku' => 'required|string|max:50|unique:medicines,sku,' . $medicine->id,
             'name' => 'required|string|max:255',
             'generic_name' => 'nullable|string|max:255',
             'medicine_type_id' => 'required|exists:medicine_types,id',
-            'unit' => 'nullable|string|max:50',
+            'unit' => 'required|string|max:50',
             'strength' => 'nullable|string|max:50',
             'price_per_unit' => 'required|numeric|min:0',
             'reorder_level' => 'nullable|integer|min:0',
-            'description' => 'nullable|string',
+            'is_active' => 'sometimes|boolean',
         ]);
 
         $medicine->update($validated);

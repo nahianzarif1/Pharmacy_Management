@@ -22,7 +22,7 @@
                         <div>Type: <strong>{{ $medicine->medicineType->name ?? '-' }}</strong></div>
                         <div>Unit: <strong>{{ $medicine->unit }}</strong></div>
                         <div>Strength: <strong>{{ $medicine->strength ?? '-' }}</strong></div>
-                        <div>Price/unit: <strong>₹{{ number_format($medicine->price_per_unit,2) }}</strong></div>
+                        <div>Price/unit: <strong>৳{{ number_format($medicine->price_per_unit,2) }}</strong></div>
                         <div>Reorder level: <strong>{{ $medicine->reorder_level }}</strong></div>
                     </div>
 

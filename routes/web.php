@@ -8,6 +8,7 @@ use App\Http\Controllers\SupplierController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\TransactionController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -45,9 +46,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('sales', App\Http\Controllers\SaleController::class);
     // Sale Items
     Route::resource('sale-items', App\Http\Controllers\SaleItemController::class)->only(['index','show']);
+
+    // Transactions (read-only index view)
+    Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
 });
 
 require __DIR__.'/auth.php';
 
 // API-like helper for typeahead (simple, authenticated)
 Route::get('/api/medicines/search', [App\Http\Controllers\MedicineController::class, 'search'])->middleware('auth')->name('api.medicines.search');
+

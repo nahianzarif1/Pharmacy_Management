@@ -58,7 +58,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $medicine->name }}<div class="text-xs text-gray-500">{{ $medicine->generic_name }}</div></td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $medicine->medicineType->name ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $medicine->unit }} {{ $medicine->strength ? '('.$medicine->strength.')' : '' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹{{ number_format($medicine->price_per_unit,2) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">৳{{ number_format($medicine->price_per_unit,2) }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{-- compute total stock from batches --}}
                                             @php
